@@ -67,6 +67,10 @@ func BuildURL(q core.Query) (string, error) {
 		params.Add("rn", strconv.Itoa(q.Limit))
 	}
 
+	if q.Page > 0 {
+		params.Add("pn", strconv.Itoa((q.Page-1)*10))
+	}
+
 	if len(params.Get("wd")) == 0 {
 		return "", errors.New("Empty query built")
 	}

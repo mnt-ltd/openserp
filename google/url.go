@@ -259,6 +259,10 @@ func BuildURL(q core.Query) (string, error) {
 		params.Add("num", strconv.Itoa(q.Limit))
 	}
 
+	if q.Page > 0 {
+		params.Add("start", strconv.Itoa((q.Page-1)*10))
+	}
+
 	if q.LangCode != "" {
 		params.Add("hl", q.LangCode)
 		params.Add("lr", "lang_"+strings.ToLower(q.LangCode))

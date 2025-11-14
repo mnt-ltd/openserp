@@ -13,7 +13,7 @@ import (
 )
 
 func BuildURL(q core.Query) (string, error) {
-	base, err := url.Parse("https://www.bing.com")
+	base, err := url.Parse("https://cn.bing.com")
 	if err != nil {
 		return "", err
 	}
@@ -47,6 +47,14 @@ func BuildURL(q core.Query) (string, error) {
 	if q.Limit > 0 {
 		params.Add("count", strconv.Itoa(q.Limit))
 	}
+
+	if q.Page > 0 {
+		offset := (q.Page - 1) * 10
+		params.Add("first", strconv.Itoa(offset))
+	}
+
+	// 只搜索国内
+	params.Add("ensearch", "0")
 
 	// Set search date range - Bing supports date filtering via query text
 	if q.DateInterval != "" {

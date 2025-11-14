@@ -60,6 +60,7 @@ type Query struct {
 	Filetype     string // File extension to search.
 	Site         string // Search site
 	Limit        int    // Limit the number of results
+	Page         int    // Page number for pagination
 	Answers      bool   // Include question and answers from SERP page to results with negative indexes
 	ProxyURL     string // Proxy URL for raw requests
 	Insecure     bool   // Allow insecure TLS connections
@@ -79,11 +80,17 @@ func (searchQuery *Query) InitFromContext(reqCtx *fiber.Ctx) error {
 	searchQuery.Filetype = reqCtx.Query("file")
 	searchQuery.Site = reqCtx.Query("site")
 
-	limit, err := strconv.Atoi(reqCtx.Query("limit", "25"))
+	limit, err := strconv.Atoi(reqCtx.Query("limit", "10"))
 	if err != nil {
 		return err
 	}
 	searchQuery.Limit = limit
+
+	page, err := strconv.Atoi(reqCtx.Query("limit", "1"))
+	if err != nil {
+		return err
+	}
+	searchQuery.Page = page
 
 	searchQuery.Answers, err = strconv.ParseBool(reqCtx.Query("answers", "0"))
 	if err != nil {
