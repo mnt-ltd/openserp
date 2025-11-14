@@ -119,7 +119,10 @@ curl "http://localhost:7000/mega/engines"
 | `file`    | File extension       | `PDF`, `DOC`, `XLS`               |
 | `site`    | Site-specific search | `github.com`, `stackoverflow.com` |
 | `limit`   | Number of results    | `10`, `25`, `50`                  |
+| `page`    | Results page (1 = first)| `1`, `2`, `3`                   |
 | `answers` | Include Q&A results  | `true`, `false`                   |
+
+Pagination is currently supported on Google, Bing, and Baidu endpoints; other engines will ignore `page` until native pagination lands.
 
 ### Individual Engine Examples
 
