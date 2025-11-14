@@ -1,6 +1,8 @@
 package brave
 
 import (
+	"fmt"
+
 	"github.com/go-rod/rod"
 	"github.com/karust/openserp/core"
 	"golang.org/x/time/rate"
@@ -109,4 +111,8 @@ func (s *BraveSearch) Search(query core.Query) ([]core.SearchResult, error) {
 
 	defer page.Close()
 	return searchResults, nil
+}
+
+func (s *BraveSearch) SearchImage(query core.Query) ([]core.SearchResult, error) {
+	return nil, fmt.Errorf("image search is not supported for brave")
 }
