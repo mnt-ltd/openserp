@@ -86,11 +86,7 @@ func (searchQuery *Query) InitFromContext(reqCtx *fiber.Ctx) error {
 	}
 	searchQuery.Limit = limit
 
-	page, err := strconv.Atoi(reqCtx.Query("limit", "1"))
-	if err != nil {
-		return err
-	}
-	searchQuery.Page = page
+	searchQuery.Page, _ = strconv.Atoi(reqCtx.Query("page", "0"))
 
 	searchQuery.Answers, err = strconv.ParseBool(reqCtx.Query("answers", "0"))
 	if err != nil {
