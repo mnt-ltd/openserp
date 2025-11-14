@@ -115,8 +115,7 @@ func searchRaw(engineType string, query core.Query) ([]core.SearchResult, error)
 	case "baidu":
 		return baidu.Search(query)
 	case "brave":
-		logrus.Warn("Brave does not support raw HTTP requests mode. Please use browser mode instead.")
-		return nil, fmt.Errorf("brave does not support raw requests mode")
+		return brave.SearchRaw(query)
 	case "bing":
 		logrus.Warn("Bing does not support raw HTTP requests mode. Please use browser mode instead.")
 		return nil, fmt.Errorf("bing does not support raw requests mode")

@@ -25,6 +25,11 @@ func BuildURL(q core.Query) (string, error) {
 		return "", errors.New("empty query built")
 	}
 
+	if q.DateInterval != "" {
+		// Brave does not support date interval filtering via URL parameters.
+		// return "", errors.New("date interval filtering not supported by Brave")
+	}
+
 	params.Add("spellcheck", "0")
 	base.RawQuery = params.Encode()
 	return base.String(), nil
