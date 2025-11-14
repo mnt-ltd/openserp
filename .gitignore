@@ -25,3 +25,4 @@ logs.txt
 .release
 core/test/
 .aider*
+release/
