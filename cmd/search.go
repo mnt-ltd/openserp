@@ -12,6 +12,7 @@ import (
 	"github.com/karust/openserp/core"
 	"github.com/karust/openserp/duckduckgo"
 	"github.com/karust/openserp/google"
+	"github.com/karust/openserp/sogou"
 	"github.com/karust/openserp/yandex"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -20,7 +21,7 @@ import (
 var searchCMD = &cobra.Command{
 	Use:     "search",
 	Aliases: []string{"find"},
-	Short:   "Search results using chosen web search engine (google, yandex, baidu, bing, duckduckgo, brave)",
+	Short:   "Search results using chosen web search engine (google, yandex, baidu, bing, duckduckgo, brave, sogou)",
 	Args:    cobra.MatchAll(cobra.OnlyValidArgs, cobra.ExactArgs(2)),
 	Run:     search,
 }
@@ -93,6 +94,8 @@ func searchBrowser(engineType string, query core.Query) ([]core.SearchResult, er
 		engine = baidu.New(*browser, config.BaiduConfig)
 	case "bing":
 		engine = bing.New(*browser, config.BingConfig)
+	case "sogou":
+		engine = sogou.New(*browser, config.SogouConfig)
 	case "brave":
 		engine = brave.New(*browser, config.BraveConfig)
 	case "duck":
@@ -114,6 +117,8 @@ func searchRaw(engineType string, query core.Query) ([]core.SearchResult, error)
 		return google.Search(query)
 	case "baidu":
 		return baidu.Search(query)
+	case "sogou":
+		return sogou.SearchRaw(query)
 	case "brave":
 		return brave.SearchRaw(query)
 	case "bing":

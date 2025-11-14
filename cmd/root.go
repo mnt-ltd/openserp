@@ -27,6 +27,7 @@ type Config struct {
 	BingConfig       core.SearchEngineOptions `mapstructure:"bing"`
 	DuckDuckGoConfig core.SearchEngineOptions `mapstructure:"duckduckgo"`
 	BraveConfig      core.SearchEngineOptions `mapstructure:"brave"`
+	SogouConfig      core.SearchEngineOptions `mapstructure:"sogou"`
 }
 
 type Config2Captcha struct {
