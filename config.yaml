@@ -41,7 +41,3 @@ brave:
 sogou:
   rate_requests: 4
   rate_burst: 2
-
-brave:
-  rate_requests: 4
-  rate_burst: 2
