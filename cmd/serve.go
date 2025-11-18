@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/karust/openserp/baidu"
@@ -73,7 +76,7 @@ func serve(cmd *cobra.Command, args []string) {
 			&rawEngine{name: "baidu"},
 			&rawEngine{name: "brave"},
 		)
-		serv.Listen()
+		_serve(serv)
 		return
 	}
 
@@ -98,6 +101,15 @@ func serve(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	// Ensure browser is closed when function returns (covers early returns)
+	defer func() {
+		if err := browser.Close(); err != nil {
+			logrus.Errorf("Browser close error: %v", err)
+		} else {
+			logrus.Info("Browser closed")
+		}
+	}()
+
 	yand := yandex.New(*browser, config.YandexConfig)
 	gogl := google.New(*browser, config.GoogleConfig)
 	baidu := baidu.New(*browser, config.BaiduConfig)
@@ -107,13 +119,38 @@ func serve(cmd *cobra.Command, args []string) {
 	sogou := sogou.New(*browser, config.SogouConfig)
 
 	serv := core.NewServer(config.App.Host, config.App.Port, gogl, yand, baidu, bing, ddg, brave, sogou)
-
-	err = serv.Listen()
-	if err != nil {
-		logrus.Error(err)
-	}
+	_serve(serv)
 }
 
 func init() {
 	RootCmd.AddCommand(serveCMD)
+}
+
+func _serve(serv *core.Server) {
+	// Start server and listen for shutdown signals
+	errCh := make(chan error, 1)
+	go func() { errCh <- serv.Listen() }()
+
+	logrus.Infof("HTTP server started on %s:%d", config.App.Host, config.App.Port)
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP, syscall.SIGQUIT)
+
+	select {
+	case sig := <-sigCh:
+		logrus.Infof("Received signal %s, shutting down server and browser...", sig)
+		if err := serv.Shutdown(); err != nil {
+			logrus.Errorf("Server shutdown error: %v", err)
+		} else {
+			logrus.Info("Server shutdown completed")
+		}
+		// Browser will be closed by deferred call
+	case err := <-errCh:
+		if err != nil {
+			logrus.Errorf("Server exited with error: %v", err)
+		} else {
+			logrus.Info("Server stopped")
+		}
+		// Browser will be closed by deferred call
+	}
 }

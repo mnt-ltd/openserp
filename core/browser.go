@@ -177,5 +177,19 @@ func (b *Browser) Navigate(URL string) (*rod.Page, error) {
 }
 
 func (b *Browser) Close() error {
-	return b.browser.Close()
+	if b == nil {
+		return nil
+	}
+	if b.browser != nil {
+		return b.browser.Close()
+	}
+	// Attempt to connect to existing browser by control URL and close it
+	if b.browserAddr != "" {
+		rb := rod.New().ControlURL(b.browserAddr)
+		if err := rb.Connect(); err != nil {
+			return err
+		}
+		return rb.Close()
+	}
+	return nil
 }
